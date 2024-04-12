@@ -39,7 +39,7 @@ alias compile_emacs_bitch='~/.config/emacs/bin/doom sync'
 # are you sane?
 alias rm="rm -i"
 
-alias df="df =h"
+alias df="df -h"
 
 alias grep="grep --color=auto"
 
