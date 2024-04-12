@@ -18,4 +18,9 @@ export PATH="$GOROOT/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# hashlink
 export PATH="$PATH:$HOME/hashlink"
+
+# emacs
+export PATH="$HOME/.config/emacs/bin:$PATH"
+

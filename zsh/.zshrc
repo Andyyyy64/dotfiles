@@ -27,10 +27,23 @@ alias ipinfo="ipconfig | grep inet"
 
 alias hsgrep="history | grep"
 
+alias lsg="ls -al | grep"
+
+alias cat="bat"
+
 alias sshuniv="ssh s1300107@sshgate.u-aizu.ac.jp"
 
 # emacs is you pet
 alias compile_emacs_bitch='~/.config/emacs/bin/doom sync'
+
+# are you sane?
+alias rm="rm -i"
+
+alias df="df =h"
+
+alias grep="grep --color=auto"
+
+# functions
 
 your_ass_stinks() {
         git add .
@@ -80,9 +93,6 @@ my_uptime() {
 search() {
     find . -name "$1" 2>/dev/null
 }
-
-export PATH="$HOME/.config/emacs/bin:$PATH"
-
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
