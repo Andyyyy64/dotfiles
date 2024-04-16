@@ -12,7 +12,7 @@ main () {
     declare -a config_files=("emacs" "i3" "picom" "polybar")
 
     # dotfiles for the home folder
-    declare -a home_files=("zsh/.zshrc" "zsh/.zshenv" ".doom.d")
+    declare -a home_files=("zsh/.zshrc" "zsh/.zshenv" ".doom.d" ".tmux.conf")
 
     # Process all files in the .config folder
     for file in "${config_files[@]}"; do

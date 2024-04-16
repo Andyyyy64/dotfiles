@@ -64,7 +64,10 @@
     (end-of-line))
   (global-set-key (kbd "M-n") 'dusdanig-move-line-down)
   (global-set-key (kbd "M-p") 'dusdanig-move-line-up))
-
+  
+;; slime
+(progn
+  (setq inferior-lisp-program "sbcl"))
 
 ;; dired
 (progn
