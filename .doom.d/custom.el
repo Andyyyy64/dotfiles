@@ -64,10 +64,7 @@
     (end-of-line))
   (global-set-key (kbd "M-n") 'dusdanig-move-line-down)
   (global-set-key (kbd "M-p") 'dusdanig-move-line-up))
-  
-;; slime
-(progn
-  (setq inferior-lisp-program "sbcl"))
+
 
 ;; dired
 (progn
@@ -76,14 +73,14 @@
   (setq dired-isearch-filenames t))
 
 ;; recentf
-;;(progn
-  ;;(setq recentf-max-saved-items 2000)
-  ;;(setq recentf-auto-cleanup 'never)
-  ;;(setq recentf-exclude '("/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.cask/"))
-  ;;(setq recentf-auto-save-timer (run-with-idle-timer 30 t 'recentf-save-list))
-  ;;(recentf-mode 1)
-  ;;(global-set-key (kbd "\C-x p") 'helm-recentf))
+(progn
+  (setq recentf-max-saved-items 2000)
+  (setq recentf-auto-cleanup 'never)
+  (setq recentf-exclude '("/recentf" "COMMIT_EDITMSG" "/.?TAGS" "^/sudo:" "/\\.emacs\\.d/games/*-scores" "/\\.emacs\\.d/\\.cask/"))
+  (setq recentf-auto-save-timer (run-with-idle-timer 30 t 'recentf-save-list))
+  (recentf-mode 1)
+  (global-set-key (kbd "\C-x p") 'helm-recentf))
 
 ;;;; fzf
 (progn
-  ;;(global-set-key (kbd "\C-x f") 'fzf))
+  (global-set-key (kbd "\C-x f") 'fzf))
