@@ -35,6 +35,7 @@ alias sshuniv="ssh s1300107@sshgate.u-aizu.ac.jp"
 
 # emacs is you pet
 alias compile_emacs_bitch='~/.config/emacs/bin/doom sync'
+alias e='doom run'
 
 # are you sane?
 alias rm="rm -i"
@@ -97,8 +98,3 @@ search() {
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-. "$HOME/.cargo/env"
-
-
-
-
