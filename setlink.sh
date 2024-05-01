@@ -6,10 +6,13 @@ config_folder="${HOME}/.config"
 home_folder="${HOME}"
 
 main () {
+    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs 
+    ~/.config/emacs/bin/doom install
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     printf "Creating symbolic links for dotfiles...\n"
 
     # dotfiles for the .config folder
-    declare -a config_files=("emacs" "i3" "picom" "polybar")
+    declare -a config_files=("i3" "picom" "polybar")
 
     # dotfiles for the home folder
     declare -a home_files=("zsh/.zshrc" "zsh/.zshenv" ".doom.d" ".tmux.conf")
