@@ -86,4 +86,4 @@
 
 ;;;; fzf
 (progn
-  ;;(global-set-key (kbd "\C-x f") 'fzf))
+  (global-set-key (kbd "\C-x f") 'fzf))
