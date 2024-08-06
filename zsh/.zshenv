@@ -23,3 +23,8 @@ export PATH="$PATH:$HOME/hashlink"
 
 # emacs
 export PATH="$HOME/.config/emacs/bin:$PATH"
+
+#go shit
+export GOROOT="/usr/local/go"
+export GOPATH="$HOME/go"
+export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"

@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/bash
 
 for i in {1..5}; do
     ping -c 1 8.8.8.8 &> /dev/null && break

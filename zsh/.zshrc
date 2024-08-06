@@ -1,16 +1,14 @@
-
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
 export ZSH="$HOME/.oh-my-zsh"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ZSH_THEME="random"
 
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search)
 
 source $ZSH/oh-my-zsh.sh
-
 
 # alias's
 
@@ -29,8 +27,6 @@ alias hsgrep="history | grep"
 
 alias lsg="ls -al | grep"
 
-alias cat="bat"
-
 alias sshuniv="ssh s1300107@sshgate.u-aizu.ac.jp"
 
 # emacs is you pet
@@ -46,14 +42,24 @@ alias grep="grep --color=auto"
 
 # functions
 
-your_ass_stinks() {
+cat() {
+    if command -v batcat &> /dev/null; then
+        batcat "$@"
+    elif command -v bat &> /dev/null; then
+        bat "$@"
+    else
+        /bin/cat "$@"
+    fi
+}
+
+fuckgit() {
         git add .
         git commit -m "fuck you"
         local branch=$(git symbolic-ref --short HEAD)
         git push origin $branch
 }
 
-just_extract_bitch() {
+extract_any() {
     if [ -f $1 ]; then
         case $1 in
         *.tar.bz2) tar xvjf $1 ;;
@@ -94,7 +100,3 @@ my_uptime() {
 search() {
     find . -name "$1" 2>/dev/null
 }
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
