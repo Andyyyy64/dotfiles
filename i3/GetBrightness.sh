@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/bash
 
 brightness_eDP_raw=$(xrandr --verbose | grep -i 'eDP' -A5 | grep 'Brightness:' | awk '{print $2}')
 brightness_eDP=$(printf "%.0f" $(echo "$brightness_eDP_raw * 100" | bc))
