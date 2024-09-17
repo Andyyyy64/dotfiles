@@ -8,8 +8,8 @@
    '("e27c9668d7eddf75373fa6b07475ae2d6892185f07ebed037eedf783318761d7" "ba4ab079778624e2eadbdc5d9345e6ada531dc3febeb24d257e6d31d5ed02577" default))
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(package-selected-packages
-   '(multi-vterm battle-haxe obsidian auto-complete-clang-async tree-sitter-langs tree-sitter company-irony irony company-go react-snippets magit web-mode tide leaf-keywords hydra gruber-darker-theme el-get blackout))
- '(zoom-mode t nil (zoom))
+   '(neotree all-the-icons multi-vterm battle-haxe obsidian auto-complete-clang-async tree-sitter-langs tree-sitter company-irony irony company-go react-snippets magit web-mode tide leaf-keywords hydra gruber-darker-theme el-get blackout))
+ '(zoom-mode t)
  '(zoom-size '(0.618 . 0.618)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
