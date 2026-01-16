@@ -14,11 +14,15 @@
     ghq
     jq
 
-    # Modern tools for better development
-    tokei # Count lines of code
-    procs # Alternative to ps
-    bottom # Alternative to htop
-    delta # Make git diff easier to read
-    diff-so-fancy # Make diff even easier to read
+    # Modern development tools
+    tokei         # Count lines of code
+    procs         # Alternative to ps
+    bottom        # Alternative to htop (btm)
+    delta         # Better git diff
+    diff-so-fancy # Even better git diff
+    lazygit       # Git TUI
+    gh            # GitHub CLI
+    du-dust       # Visualize disk usage (dust)
+    ripgrep-all   # Search through PDF, zip, etc. (rga)
   ];
 }
