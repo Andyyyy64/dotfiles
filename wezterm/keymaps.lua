@@ -78,6 +78,28 @@ local keys = {
     mods = "ALT",
     action = act.ToggleFullScreen,
   },
+
+  -- Ctrl-C: Copy (when text is selected, otherwise send SIGINT)
+  {
+    key = "c",
+    mods = "CTRL",
+    action = wezterm.action_callback(function(window, pane)
+      local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+      if has_selection then
+        window:perform_action(act.CopyTo("Clipboard"), pane)
+        window:perform_action(act.ClearSelection, pane)
+      else
+        window:perform_action(act.SendKey { key = "c", mods = "CTRL" }, pane)
+      end
+    end),
+  },
+
+  -- Ctrl-V: Paste
+  {
+    key = "v",
+    mods = "CTRL",
+    action = act.PasteFrom("Clipboard"),
+  },
 }
 
 return keys

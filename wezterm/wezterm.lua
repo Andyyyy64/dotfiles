@@ -2,6 +2,17 @@ local wezterm = require("wezterm")
 local act = wezterm.action
 local utils = require("utils")
 local keys = require("keymaps")
+local session = require("session")
+
+-- Maximize + restore previous session on startup
+wezterm.on('gui-startup', function(cmd)
+  session.startup(cmd)
+end)
+
+-- Periodically save session state (tab cwds)
+wezterm.on('update-status', function(window, pane)
+  session.save(window)
+end)
 
 local config = {}
 
