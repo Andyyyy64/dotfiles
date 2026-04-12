@@ -3,6 +3,7 @@ local act = wezterm.action
 local utils = require("utils")
 local keys = require("keymaps")
 local session = require("session")
+local sidebar = require("sidebar")
 
 -- Maximize + restore previous session on startup
 wezterm.on('gui-startup', function(cmd)
@@ -59,5 +60,13 @@ config.leader = {
 }
 
 config.keys = keys
+
+-- wezterm-claude-sidebar: C-x s to toggle
+sidebar.apply(config, {
+  binary = "/home/andy/bin/wcs",
+  toggle_key = { key = "c", mods = "LEADER|CTRL" },
+  width_cells = 44,
+  tab_title = true,
+})
 
 return config
