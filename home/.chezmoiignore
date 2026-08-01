@@ -1,0 +1,7 @@
+# ここに書いたパスは chezmoi の管理対象から外れる（作成も更新もされない）。
+
+{{ if eq .chezmoi.os "darwin" }}
+# .zshenv は WSL 側の環境変数設定（goenv / bun / hashlink / emacs）。
+# macOS には元から存在せず、apply で新規作成すると PATH が変わってしまうため除外する。
+.zshenv
+{{ end }}
