@@ -25,8 +25,8 @@ end
 -- Basic settings
 -- ==============================
 
--- Launch with WSL (Ubuntu)
-config.default_domain = 'WSL:Ubuntu'
+-- Launch with WSL (Ubuntu) -- Windows only; disabled on macOS
+-- config.default_domain = 'WSL:Ubuntu'
 
 -- Faster rendering
 config.front_end = "WebGpu"
@@ -38,12 +38,12 @@ config.scrollback_lines = 5000
 config.enable_scroll_bar = false
 
 -- Configuration for Claude Code
-config.use_ime = false
+config.use_ime = true
 
 -- Appearance
 config.hide_tab_bar_if_only_one_tab = false
 config.window_decorations = "TITLE | RESIZE"
-config.color_scheme = "Kanagawa Dragon (Gogh)"
+config.color_scheme = "Kanagawa (Gogh)"
 config.window_background_opacity = 0.9
 
 -- Fonts
