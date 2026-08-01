@@ -1,0 +1,18 @@
+# who use golang is fucking damm
+export GOENV_ROOT="$HOME/.goenv"
+export GOPATH="$HOME/PROJECT/Go"
+export PATH="$PATH:$GOPATH/bin"
+export PATH="$GOROOT/bin:$PATH"
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# hashlink
+export PATH="$PATH:$HOME/hashlink"
+
+# emacs
+export PATH="$HOME/.config/emacs/bin:$PATH"
