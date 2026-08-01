@@ -1,0 +1,47 @@
+[ui]
+agent_panel_sort = "spaces"
+
+# =============================================================================
+# WezTerm (dot_config/wezterm/keymaps.lua) の leader = C-x スキームを移植したもの。
+# キーを覚え直さずに済ませるのが目的。
+#
+# 分割の命名に注意:
+#   WezTerm SplitHorizontal (左右に並ぶ) = herdr split_vertical   (分割線が縦)
+#   WezTerm SplitVertical   (上下に並ぶ) = herdr split_horizontal (分割線が横)
+# =============================================================================
+[keys]
+prefix = "ctrl+x"
+
+split_vertical = "prefix+3"          # C-x 3 : 左右に分割
+split_horizontal = "prefix+2"        # C-x 2 : 上下に分割
+cycle_pane_next = "prefix+o"         # C-x o : 次のペイン
+cycle_pane_previous = "prefix+shift+o"
+close_pane = ["prefix+0", "prefix+k"]
+zoom = "prefix+1"                    # C-x 1 : 他を閉じる代わりにズーム
+goto = "prefix+b"                    # C-x b : ナビゲータ (WezTerm の ShowTabNavigator 相当)
+reload_config = "prefix+r"
+
+# 単発キーでの移動。Zed 上で実際に押すキーは:
+#   option+n / option+p -> タブ移動   (wire: ESC n / ESC p = alt+n / alt+p)
+#   cmd+n    / cmd+p    -> space 移動 (wire: ESC N / ESC P = alt+shift+n / alt+shift+p)
+# cmd は端末に送れないので Zed 側で大文字へ翻訳している (dot_config/zed/keymap.json.tmpl)。
+# option+n と cmd+n を同じ ESC n にすると区別できなくなるため大小で分けている。
+#
+# なお ctrl+tab や ctrl+shift+n は端末のバイト列で ctrl+n と区別できず、
+# herdr config check は通るが一生届かないので使わないこと。
+next_tab = ["prefix+n", "alt+n"]
+previous_tab = ["prefix+p", "alt+p"]
+next_workspace = ["alt+shift+n"]
+previous_workspace = ["alt+shift+p"]
+{{ if eq .chezmoi.os "darwin" }}
+# =============================================================================
+# 日本語入力まわり。いずれも macOS の入力ソース API に依存するため darwin 限定。
+# herdr 側の機能なので Zed でも WezTerm でも効く。
+# =============================================================================
+[experimental]
+# 日本語入力ONのままでも prefix (C-x) が効くよう、prefix 中だけ ASCII 入力へ切替
+switch_ascii_input_source_in_prefix = true
+# AI エージェントの TUI がカーソルを隠すせいで変換候補が変な位置に出るのを直す
+reveal_hidden_cursor_for_cjk_ime = true
+cjk_ime_agents = ["claude", "codex"]
+{{ end }}

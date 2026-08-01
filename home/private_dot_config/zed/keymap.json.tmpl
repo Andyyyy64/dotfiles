@@ -1,0 +1,56 @@
+// Zed keymap
+//
+// Docs: https://zed.dev/docs/key-bindings
+//
+// cmd を使う行は macOS 専用。Linux/WSL 側の割り当てはまだ決めていない。
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      // 中央ペインのターミナル。terminals テーブルが workspace_id を持つため
+      // プロジェクトを切り替えると消える。
+      "ctrl-`": "workspace::NewCenterTerminal",
+
+      // WezTerm (dot_config/wezterm/keymaps.lua) の C-x スキームを移植。
+      // ターミナル内では下の Terminal ブロックが ctrl-x を herdr へ素通しする。
+      "ctrl-x 3": "pane::SplitRight",
+      "ctrl-x 2": "pane::SplitDown",
+      "ctrl-x o": "workspace::ActivateNextPane",
+      "ctrl-x shift-o": "workspace::ActivatePreviousPane",
+      "ctrl-x 0": "pane::CloseAllItems",
+      "ctrl-x k": "pane::CloseAllItems",
+      "ctrl-x 1": "workspace::ToggleZoom",
+      "ctrl-x b": "tab_switcher::Toggle"{{ if eq .chezmoi.os "darwin" }},
+
+      "cmd-ctrl-t": "workspace::NewCenterTerminal",
+      // ターミナルスレッド。sidebar_terminal_threads は workspace_id を持たないので
+      // プロジェクトを切り替えても残る。herdr の常設先はこちら。
+      "cmd-ctrl-h": "agent::NewTerminalThread"{{ end }}
+    }
+  },
+
+  {
+    "context": "Terminal",
+    "bindings": {
+      // herdr の prefix (C-x) と readline の C-b を Zed に横取りさせない
+      "ctrl-x": ["terminal::SendKeystroke", "ctrl-x"],
+      "ctrl-b": ["terminal::SendKeystroke", "ctrl-b"],
+
+      // ctrl-tab は Zed の pane::ActivateNextItem に食われるので止める。
+      // ただし Tab=0x09 に Ctrl を足しても同じバイトなので、端末経由で
+      // herdr に「Ctrl+Tab」として届けることはできない。ここでは無効化が目的。
+      "ctrl-tab": ["terminal::SendKeystroke", "ctrl-tab"],
+      "ctrl-shift-tab": ["terminal::SendKeystroke", "ctrl-shift-tab"],
+
+      // option+n/p -> ESC n / ESC p (小文字) -> herdr の next_tab / previous_tab
+      "alt-n": ["terminal::SendText", "\u001bn"],
+      "alt-p": ["terminal::SendText", "\u001bp"]{{ if eq .chezmoi.os "darwin" }},
+
+      // cmd は端末に送れない（macOS の Command には端末表現が無い）ので
+      // Zed 側で翻訳する。option+n と衝突しないよう cmd 側は大文字に割る。
+      //   cmd+n/p -> ESC N / ESC P (大文字) -> herdr の next_workspace / previous_workspace
+      "cmd-n": ["terminal::SendText", "\u001bN"],
+      "cmd-p": ["terminal::SendText", "\u001bP"]{{ end }}
+    }
+  }
+]

@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""herdr でフォーカスしているペインに Zed のプロジェクトを追従させる。
+
+herdr の socket API で pane.focused を購読し、そのペインの作業ディレクトリの
+git ルートを `zed` で開く。Zed の default_open_behavior は "existing_window" なので、
+新しいウィンドウではなく今のウィンドウのプロジェクトが切り替わる。
+
+git リポジトリ外のペイン（ホーム直下など）にフォーカスしても Zed は切り替えない。
+巨大なディレクトリを開かせるとインデックスで固まるため。
+
+    起動: herdr-zed-sync
+    停止: Ctrl-C
+"""
+
+import json
+import os
+import shutil
+import socket
+import subprocess
+import sys
+import time
+
+SOCKET_PATH = os.environ.get("HERDR_SOCKET_PATH") or os.path.expanduser(
+    "~/.config/herdr/herdr.sock"
+)
+SUBSCRIPTIONS = [{"type": "pane.focused"}]
+RECONNECT_WAIT_SECONDS = 2
+
+
+def log(message):
+    print(f"[herdr-zed-sync] {message}", flush=True)
+
+
+def connect():
+    conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    conn.connect(SOCKET_PATH)
+    return conn
+
+
+def request(method, params):
+    """短命の接続で 1 リクエストだけ投げる。購読用の接続とは分ける。"""
+    conn = connect()
+    conn.settimeout(5)
+    try:
+        payload = {"id": "herdr-zed-sync", "method": method, "params": params}
+        conn.sendall((json.dumps(payload) + "\n").encode())
+        buffer = b""
+        while b"\n" not in buffer:
+            chunk = conn.recv(65536)
+            if not chunk:
+                return None
+            buffer += chunk
+        return json.loads(buffer.split(b"\n", 1)[0])
+    finally:
+        conn.close()
+
+
+def pane_directory(pane_id):
+    response = request("pane.get", {"pane_id": pane_id})
+    pane = (response or {}).get("result", {}).get("pane")
+    if not pane:
+        return None
+    # foreground_cwd はペイン内で cd した先を追う。無い場合はペインの cwd。
+    return pane.get("foreground_cwd") or pane.get("cwd")
+
+
+def project_root(directory):
+    """git リポジトリのルートを返す。リポジトリ外なら None。
+
+    ホーム直下のような巨大なディレクトリを Zed に開かせるとインデックスで
+    固まるため、リポジトリ以外は同期対象にしない。
+    """
+    result = subprocess.run(
+        ["git", "-C", directory, "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip()
+
+
+def handle_event(message, zed, current_root):
+    data = message.get("data") or {}
+    if data.get("type") != "pane_focused":
+        return current_root
+
+    directory = pane_directory(data["pane_id"])
+    if not directory or not os.path.isdir(directory):
+        return current_root
+
+    root = project_root(directory)
+    if root is None:
+        log(f"{data['pane_id']} は git リポジトリ外 ({directory}) — 切り替えません")
+        return current_root
+    if root == current_root:
+        return current_root
+
+    log(f"{data['pane_id']} → {root}")
+    subprocess.run([zed, root])
+    return root
+
+
+def main():
+    zed = shutil.which("zed")
+    if not zed:
+        sys.exit(
+            "zed CLI が PATH にありません。"
+            "Zed で cmd-shift-p → 'cli: install' を実行してください。"
+        )
+
+    current_root = None
+    while True:
+        try:
+            conn = connect()
+            subscribe = {
+                "id": "herdr-zed-sync",
+                "method": "events.subscribe",
+                "params": {"subscriptions": SUBSCRIPTIONS},
+            }
+            conn.sendall((json.dumps(subscribe) + "\n").encode())
+            log(f"購読開始: {SOCKET_PATH}")
+
+            buffer = b""
+            while True:
+                chunk = conn.recv(65536)
+                if not chunk:
+                    raise ConnectionError("herdr との接続が切れました")
+                buffer += chunk
+                while b"\n" in buffer:
+                    line, buffer = buffer.split(b"\n", 1)
+                    if not line.strip():
+                        continue
+                    current_root = handle_event(json.loads(line), zed, current_root)
+        except KeyboardInterrupt:
+            log("終了します")
+            return
+        except (ConnectionError, OSError) as error:
+            log(f"{error} — {RECONNECT_WAIT_SECONDS} 秒後に再接続します")
+            time.sleep(RECONNECT_WAIT_SECONDS)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,73 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# chezmoi apply のあとに走る macOS 用のセットアップ。
+# このファイルの内容が変わったときだけ再実行される (run_onchange_)。
+# 何度走らせても同じ結果になるように書くこと。
+set -euo pipefail
+
+log() { printf '[darwin-setup] %s\n' "$1"; }
+
+# --- herdr 本体 ---------------------------------------------------------------
+if ! command -v herdr >/dev/null 2>&1; then
+  log "herdr を導入します"
+  brew install herdr
+fi
+
+# --- Claude Code 連携 ---------------------------------------------------------
+# SessionStart フックを入れ、herdr 再起動後も claude --resume で復元できるようにする
+if ! herdr integration status 2>/dev/null | grep -q '^claude: current'; then
+  log "herdr の Claude Code 連携を入れます"
+  herdr integration install claude
+fi
+
+# --- Zed CLI ------------------------------------------------------------------
+# herdr のペインから `zed <path>` を叩くため。Zed の "cli: install" と同じもの。
+ZED_CLI="/Applications/Zed.app/Contents/MacOS/cli"
+if [ -x "$ZED_CLI" ] && [ ! -e "{{ .chezmoi.homeDir }}/.local/bin/zed" ]; then
+  log "zed CLI をリンクします"
+  mkdir -p "{{ .chezmoi.homeDir }}/.local/bin"
+  ln -sf "$ZED_CLI" "{{ .chezmoi.homeDir }}/.local/bin/zed"
+fi
+
+# --- herdr-zed-sync の常駐 ----------------------------------------------------
+# plist は絶対パスを含むのでコミットせず、ここで組み立てる。
+LABEL="dev.herdr.zed-sync"
+PLIST="{{ .chezmoi.homeDir }}/Library/LaunchAgents/$LABEL.plist"
+mkdir -p "$(dirname "$PLIST")" "{{ .chezmoi.homeDir }}/.local/state"
+
+cat > "$PLIST" <<PLIST_EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>$LABEL</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{ .chezmoi.homeDir }}/.local/bin/herdr-zed-sync</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>{{ .chezmoi.homeDir }}/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>{{ .chezmoi.homeDir }}/.local/state/herdr-zed-sync.log</string>
+    <key>StandardErrorPath</key>
+    <string>{{ .chezmoi.homeDir }}/.local/state/herdr-zed-sync.log</string>
+</dict>
+</plist>
+PLIST_EOF
+
+log "herdr-zed-sync を再読み込みします"
+launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
+launchctl bootstrap "gui/$(id -u)" "$PLIST"
+
+log "完了"
+{{ end -}}
